@@ -9,7 +9,7 @@ int num = 0;
 
 void rotary_a_down()
 {
-  /* encoder in 00 state, pin A jumped last */
+  /* encoder in 00 state, pin A jumped down last */
   if(digitalRead(PIN_B)==0)
   {
     /* for neutral state 00, this is the end of the cycle, but register the counterclockwise rotation only if pin A jumped last in both half cycles */
@@ -22,11 +22,17 @@ void rotary_a_down()
     attachInterrupt(digitalPinToInterrupt(PIN_A), rotary_a_up, RISING);
     attachInterrupt(digitalPinToInterrupt(PIN_B), rotary_b_up, RISING);
   }
+  /* encoder in 01 state, waiting for B to jump down */
+  else
+  {
+    detachInterrupt(digitalPinToInterrupt(PIN_A));
+    attachInterrupt(digitalPinToInterrupt(PIN_B), rotary_b_down, FALLING);
+  }
 }
 
 void rotary_b_down()
 {
-  /* encoder in 00 state, pin B jumped last */
+  /* encoder in 00 state, pin B jumped down last */
   if(digitalRead(PIN_A)==0)
   {
     /* for neutral state 00, this is the end of the cycle, but register the clockwise rotation only if pin B jumped last in both half cycles */
@@ -39,11 +45,17 @@ void rotary_b_down()
     attachInterrupt(digitalPinToInterrupt(PIN_A), rotary_a_up, RISING);
     attachInterrupt(digitalPinToInterrupt(PIN_B), rotary_b_up, RISING);
   }
+  /* encoder in 10 state, waiting for A to jump down */
+  else
+  {
+    attachInterrupt(digitalPinToInterrupt(PIN_A), rotary_a_down, FALLING);
+    detachInterrupt(digitalPinToInterrupt(PIN_B));
+  }
 }
 
 void rotary_a_up()
 {
-  /* encoder in 11 state, in A jumped last */
+  /* encoder in 11 state, in A jumped up last */
   if(digitalRead(PIN_B)==1)
   {
     /* for neutral state 11, this is the end of the cycle, but register the counterclockwise rotation only if pin A jumped last in both half cycles */
@@ -56,11 +68,17 @@ void rotary_a_up()
     attachInterrupt(digitalPinToInterrupt(PIN_A), rotary_a_down, FALLING);
     attachInterrupt(digitalPinToInterrupt(PIN_B), rotary_b_down, FALLING);
   }
+  /* encoder in 10 state, waiting for B to jump up */
+  else
+  {
+    detachInterrupt(digitalPinToInterrupt(PIN_A));
+    attachInterrupt(digitalPinToInterrupt(PIN_B), rotary_b_up, RISING);
+  }
 }
 
 void rotary_b_up()
 {
-  /* encoder in 11 state, pin B jumped last */
+  /* encoder in 11 state, pin B jumped up last */
   if(digitalRead(PIN_A)==1)
   {
     /* for neutral state 11, this is the end of the cycle, but register the clockwise rotation only if pin B jumped last in both half cycles */
@@ -72,6 +90,12 @@ void rotary_b_up()
     lasta = false;
     attachInterrupt(digitalPinToInterrupt(PIN_A), rotary_a_down, FALLING);
     attachInterrupt(digitalPinToInterrupt(PIN_B), rotary_b_down, FALLING);
+  }
+  /* encoder in 01 state, waiting for A to jump up */
+  else
+  {
+    attachInterrupt(digitalPinToInterrupt(PIN_A), rotary_a_up, RISING);
+    detachInterrupt(digitalPinToInterrupt(PIN_B));
   }
 }
 
