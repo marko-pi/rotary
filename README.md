@@ -6,6 +6,8 @@ Two innovative algorithms for rotary encoder control are presented. The detailed
 
 The four state algorithm uses interrupts to track state changes and affirms a rotation if all four states of the full cycle have been detected in the correct order. The code is very compact.
 
+There is also the older code version without interrupts, in which the states are checked by a simple loop.
+
 ## Two state algorithm
 
 The two state algorithm uses interrupts to detect the neutral and inverse states and affims a rotation when both states have been reached by the correct sequence of switch changes.  Although the code is more extensive, it is probably the optimal algorithm when it comes to reducing the computational load - up to a maximum of six interrupts are required to detect a complete cycle in the presence of switch bouncing.
